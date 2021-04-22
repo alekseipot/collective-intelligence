@@ -1,4 +1,4 @@
-package com.docler.examles;
+package com.docler.examles.chapter2;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 A dictionary of movie critics and their ratings of a small set of movies
  */
 public class Recommendations {
-    public static final Map<String, Map<String, Double>> recommendations = Map.of(
+    public static final Map<String, Map<String, Double>> personToMovie = Map.of(
             "Lisa Rose",
             Map.of("Lady in the Water", 2.5,
                     "Snakes on a Plane", 3.5,
@@ -56,8 +56,52 @@ public class Recommendations {
                     "You, Me and Dupree", 1.0)
     );
 
+    public static final Map<String, Map<String, Double>> movieToPerson = Map.of(
+            "Lady in the Water",
+            Map.of("Lisa Rose", 2.5,
+                    "Gene Seymour", 3.0,
+                    "Michael Phillips", 2.5,
+                    "Mick LaSalle", 3.0,
+                    "Jack Matthews", 3.0),
+            "Snakes on a Plane",
+            Map.of("Lisa Rose", 3.5,
+                    "Gene Seymour", 3.5,
+                    "Michael Phillips", 3.0,
+                    "Claudia Puig", 3.5,
+                    "Mick LaSalle", 4.0,
+                    "Jack Matthews", 4.0,
+                    "Toby", 4.5),
+            "Just My Luck",
+            Map.of("Lisa Rose", 3.0,
+                    "Gene Seymour", 1.5,
+                    "Claudia Puig", 3.0,
+                    "Mick LaSalle", 2.0,
+                    "Jack Matthews", 2.0),
+            "Superman Returns",
+            Map.of("Lisa Rose", 3.5,
+                    "Gene Seymour", 5.0,
+                    "Michael Phillips", 3.5,
+                    "Claudia Puig", 5.0,
+                    "Mick LaSalle", 3.0,
+                    "Jack Matthews", 3.0,
+                    "Toby", 4.0),
+            "You, Me and Dupree",
+            Map.of("Lisa Rose", 2.5,
+                    "Gene Seymour", 3.5,
+                    "Claudia Puig", 2.5,
+                    "Mick LaSalle", 2.0,
+                    "Jack Matthews", 2.0,
+                    "Toby", 3.0),
+            "The Night Listener",
+            Map.of("Lisa Rose", 3.0,
+                    "Gene Seymour", 3.0,
+                    "Michael Phillips", 4.0,
+                    "Claudia Puig", 4.5,
+                    "Mick LaSalle", 3.0,
+                    "Jack Matthews", 3.0)
+            );
 
-    public static List<KeyScore> topMarchers(String person, int topN, String similarity) {
+    public static List<KeyScore> topMarchers(Map<String, Map<String, Double>> recommendations, String person, int topN, String similarity) {
         List<KeyScore> scores =
                 recommendations.keySet().stream().filter(personFromDataSet -> !personFromDataSet.equals(person))
                         .map(personFromDataSet -> {
@@ -71,7 +115,7 @@ public class Recommendations {
         return scores.subList(0, topN);
     }
 
-    public static List<KeyScore> getRecommendations(String person, String similarityAlg) {
+    public static List<KeyScore> getRecommendations(Map<String, Map<String, Double>> recommendations, String person, String similarityAlg) {
         Map<String, Double> totals = new HashMap<>();
         Map<String, Double> simSum = new HashMap<>();
         for (String personFromDataSet : recommendations.keySet()) {
@@ -116,12 +160,17 @@ public class Recommendations {
     }
 
     public static void main(String[] args) {
-        System.out.println("=========================PearsonCorrelationScore=========================");
-        System.out.println("\"Toby\" top 3 recomenders: " + topMarchers("Toby", 3, "Pearson"));
-        System.out.println("\"Toby\" Recommendations with Pearson algorithm: " + getRecommendations("Toby", "Pearson"));
-        System.out.println("\"Toby\" Recommendations with Euclidean algorithm: " + getRecommendations("Toby", "Euclidean"));
-        System.out.println("=========================PearsonCorrelationScore=========================");
+        System.out.println("=========================Recommendations for Toby=========================");
+        System.out.println("\"Toby\" top 3 recomenders: " + topMarchers(personToMovie, "Toby", 3, "Pearson"));
+        System.out.println("\"Toby\" Recommendations with Pearson algorithm: " + getRecommendations(personToMovie, "Toby", "Pearson"));
+        System.out.println("\"Toby\" Recommendations with Euclidean algorithm: " + getRecommendations(personToMovie, "Toby", "Euclidean"));
+        System.out.println("=========================Recommendations for Toby=========================");
 
+        System.out.println("=========================Movies like Superman Returns=========================");
+        System.out.println("\"Superman Returns\" top 3 like: " + topMarchers(movieToPerson, "Superman Returns", 5, "Pearson"));
+        System.out.println("\"Superman Returns\" Recommendations with Pearson algorithm: " + getRecommendations(movieToPerson, "Superman Returns", "Pearson"));
+        System.out.println("\"Superman Returns\" Recommendations with Euclidean algorithm: " + getRecommendations(movieToPerson, "Superman Returns", "Euclidean"));
+        System.out.println("=========================Movies like Superman Returns=========================");
     }
 
     @Data
@@ -133,8 +182,8 @@ public class Recommendations {
 
         @Override
         public String toString() {
-            return "(" +
-                    key + '\'' +
+            return "('" +
+                    key + "'" +
                     ", " + score +
                     ')';
         }

@@ -1,4 +1,4 @@
-package com.docler.examles;
+package com.docler.examles.chapter2;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,9 +32,9 @@ public class EuclideanDistanceScore {
 
     public static void main(String[] args) {
         System.out.println("=========================EuclideanDistanceScore=========================");
-        System.out.println("\"Lisa Rose\" and \"Gene Seymour\" Distance: " + getSimilarityDistance(Recommendations.recommendations, "Lisa Rose", "Gene Seymour"));
-        System.out.println("\"Lisa Rose\" and \"Toby\" Distance: " + getSimilarityDistance(Recommendations.recommendations, "Lisa Rose", "Toby"));
-        System.out.println("\"Mick LaSalle\" and \"Toby\" Distance: " + getSimilarityDistance(Recommendations.recommendations, "Mick LaSalle", "Jack Matthews"));
+        System.out.println("\"Lisa Rose\" and \"Gene Seymour\" Distance: " + getSimilarityDistance(Recommendations.personToMovie, "Lisa Rose", "Gene Seymour"));
+        System.out.println("\"Lisa Rose\" and \"Toby\" Distance: " + getSimilarityDistance(Recommendations.personToMovie, "Lisa Rose", "Toby"));
+        System.out.println("\"Mick LaSalle\" and \"Toby\" Distance: " + getSimilarityDistance(Recommendations.personToMovie, "Mick LaSalle", "Jack Matthews"));
         System.out.println("=========================EuclideanDistanceScore=========================");
     }
 }
