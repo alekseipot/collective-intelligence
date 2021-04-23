@@ -20,7 +20,8 @@ public class EuclideanDistanceScore {
         if (sameMoveScores.isEmpty()) {
             return 0;
         }
-        return 1 / (1 + getDistance(recommendations, sameMoveScores, person1, person2));
+        double result = 1 / (1 + getDistance(recommendations, sameMoveScores, person1, person2));
+        return result > 1 ? 1.0 : result;
     }
 
     private static double getDistance(Map<String, Map<String, Double>> recommendations, Set<String> sameMoveScored, String person1, String person2) {

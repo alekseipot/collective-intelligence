@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /*
@@ -64,9 +65,9 @@ public class Recommendations {
         System.out.println("=========================Recommendations for Toby=========================");
 
         System.out.println("=========================Movies like Superman Returns=========================");
-        System.out.println("\"Superman Returns\" top 3 like: " + topMarchers(movieToPerson(), "Superman Returns", 5, "Pearson"));
-        System.out.println("\"Superman Returns\" Recommendations with Pearson algorithm: " + getUserBasedRecommendations(movieToPerson(), "Superman Returns", "Pearson"));
-        System.out.println("\"Superman Returns\" Recommendations with Euclidean algorithm: " + getUserBasedRecommendations(movieToPerson(), "Superman Returns", "Euclidean"));
+        System.out.println("\"Superman Returns\" top 3 like: " + topMarchers(movieToPerson(personToMovie), "Superman Returns", 5, "Pearson"));
+        System.out.println("\"Superman Returns\" Recommendations with Pearson algorithm: " + getUserBasedRecommendations(movieToPerson(personToMovie), "Superman Returns", "Pearson"));
+        System.out.println("\"Superman Returns\" Recommendations with Euclidean algorithm: " + getUserBasedRecommendations(movieToPerson(personToMovie), "Superman Returns", "Euclidean"));
         System.out.println("=========================Movies like Superman Returns=========================");
     }
 
@@ -115,8 +116,37 @@ public class Recommendations {
     }
 
     public static List<KeyScore> getItemBasedRecommendations(Map<String, Map<String, Double>> recommendations, String person, String similarityAlg) {
+        Map<String, Double> personScores = recommendations.get(person);
+        Map<String, Double> totalScore = new HashMap<>();
+        Map<String, Double> totalSim = new HashMap<>();
+        System.out.println("------------------calculateSimilarItems started------------------");
+        Map<String, List<KeyScore>> itemsSimilarity = calculateSimilarItems(recommendations, 10);
+        System.out.println("------------------calculateSimilarItems complete------------------");
+        //Loop over items rated by this user
+        for (String movie : personScores.keySet()) {
+            List<KeyScore> similarItems = itemsSimilarity.get(movie);
+            //Loop over items similar to this one
+            for (KeyScore movieWithSimilarity : similarItems) {
+                //Ignore if user already scored this one
+                if (personScores.containsKey(movieWithSimilarity.getKey())) {
+                    continue;
+                }
+                Double score = totalScore.getOrDefault(movieWithSimilarity.getKey(), 0.0);
+                totalScore.put(movieWithSimilarity.getKey(), score + movieWithSimilarity.getScore() * personScores.get(movie));
 
+                Double total = totalSim.getOrDefault(movieWithSimilarity.getKey(), 0.0);
+                totalSim.put(movieWithSimilarity.getKey(), total + movieWithSimilarity.getScore());
+            }
+        }
+
+        //Dividing each total score by total weight to get an average
         List<KeyScore> rankings = new ArrayList<>();
+        for (String movie : totalSim.keySet()) {
+            if (totalScore.get(movie) > 0) {
+                rankings.add(new KeyScore(movie, totalScore.get(movie) / totalSim.get(movie)));
+            }
+        }
+        rankings.sort((o1, o2) -> o2.getScore().compareTo(o1.getScore()));
         return rankings;
     }
 
@@ -134,14 +164,28 @@ public class Recommendations {
         return scores.subList(0, topN);
     }
 
-    private static void calculateSimilarItems(Map<String, Map<String, Double>> recommendations, Integer topN) {
-
+    private static Map<String, List<KeyScore>> calculateSimilarItems(Map<String, Map<String, Double>> recommendations, Integer topN) {
+        //Create a dictionary of items showing which other items they are similar to
+        Map<String, List<KeyScore>> result = new HashMap<>();
+        //Invert the preference matrix to be item-centric
+        Map<String, Map<String, Double>> movieToPerson = movieToPerson(recommendations);
+        AtomicInteger progress = new AtomicInteger();
+        movieToPerson.keySet().parallelStream().forEach(movie -> {
+            //Find the most similar items to this one
+            List<KeyScore> scores = topMarchers(movieToPerson, movie, topN, "Pearson");
+            result.put(movie, scores);
+            progress.getAndIncrement();
+            if (progress.get() % 100 == 0) {
+                System.out.println("Calculated similarity for items: " + progress);
+            }
+        });
+        return result;
     }
 
-    private static Map<String, Map<String, Double>> movieToPerson() {
+    private static Map<String, Map<String, Double>> movieToPerson(Map<String, Map<String, Double>> recommendations) {
         Map<String, Map<String, Double>> movieToPerson = new HashMap<>();
-        for (String person : personToMovie.keySet()) {
-            Map<String, Double> scores = personToMovie.get(person);
+        for (String person : recommendations.keySet()) {
+            Map<String, Double> scores = recommendations.get(person);
             for (String movie : scores.keySet()) {
                 Map<String, Double> personMovieScore;
                 if (movieToPerson.containsKey(movie)) {

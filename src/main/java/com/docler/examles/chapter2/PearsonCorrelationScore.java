@@ -36,7 +36,8 @@ public class PearsonCorrelationScore {
         double num = sumP - (sum1 * sum2 / n);
         double den = sqrt((sum1Sq - pow(sum1, 2) / n) * (sum2Sq - pow(sum2, 2) / n));
         if (den == 0) return 0;
-        return num / den;
+        double result = num / den;
+        return result > 1 ? 1.0 : result;
     }
 
 

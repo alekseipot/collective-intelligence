@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-class KeyScore {
-    String key;
-    Double score;
+public class KeyScore {
+    private String key;
+    private Double score;
 
     @Override
     public String toString() {
