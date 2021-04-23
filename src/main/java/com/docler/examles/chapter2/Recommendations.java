@@ -1,9 +1,9 @@
 package com.docler.examles.chapter2;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /*
@@ -56,66 +56,21 @@ public class Recommendations {
                     "You, Me and Dupree", 1.0)
     );
 
-    public static final Map<String, Map<String, Double>> movieToPerson = Map.of(
-            "Lady in the Water",
-            Map.of("Lisa Rose", 2.5,
-                    "Gene Seymour", 3.0,
-                    "Michael Phillips", 2.5,
-                    "Mick LaSalle", 3.0,
-                    "Jack Matthews", 3.0),
-            "Snakes on a Plane",
-            Map.of("Lisa Rose", 3.5,
-                    "Gene Seymour", 3.5,
-                    "Michael Phillips", 3.0,
-                    "Claudia Puig", 3.5,
-                    "Mick LaSalle", 4.0,
-                    "Jack Matthews", 4.0,
-                    "Toby", 4.5),
-            "Just My Luck",
-            Map.of("Lisa Rose", 3.0,
-                    "Gene Seymour", 1.5,
-                    "Claudia Puig", 3.0,
-                    "Mick LaSalle", 2.0,
-                    "Jack Matthews", 2.0),
-            "Superman Returns",
-            Map.of("Lisa Rose", 3.5,
-                    "Gene Seymour", 5.0,
-                    "Michael Phillips", 3.5,
-                    "Claudia Puig", 5.0,
-                    "Mick LaSalle", 3.0,
-                    "Jack Matthews", 3.0,
-                    "Toby", 4.0),
-            "You, Me and Dupree",
-            Map.of("Lisa Rose", 2.5,
-                    "Gene Seymour", 3.5,
-                    "Claudia Puig", 2.5,
-                    "Mick LaSalle", 2.0,
-                    "Jack Matthews", 2.0,
-                    "Toby", 3.0),
-            "The Night Listener",
-            Map.of("Lisa Rose", 3.0,
-                    "Gene Seymour", 3.0,
-                    "Michael Phillips", 4.0,
-                    "Claudia Puig", 4.5,
-                    "Mick LaSalle", 3.0,
-                    "Jack Matthews", 3.0)
-            );
+    public static void main(String[] args) {
+        System.out.println("=========================Recommendations for Toby=========================");
+        System.out.println("\"Toby\" top 3 recomenders: " + topMarchers(personToMovie, "Toby", 3, "Pearson"));
+        System.out.println("\"Toby\" Recommendations with Pearson algorithm: " + getUserBasedRecommendations(personToMovie, "Toby", "Pearson"));
+        System.out.println("\"Toby\" Recommendations with Euclidean algorithm: " + getUserBasedRecommendations(personToMovie, "Toby", "Euclidean"));
+        System.out.println("=========================Recommendations for Toby=========================");
 
-    public static List<KeyScore> topMarchers(Map<String, Map<String, Double>> recommendations, String person, int topN, String similarity) {
-        List<KeyScore> scores =
-                recommendations.keySet().stream().filter(personFromDataSet -> !personFromDataSet.equals(person))
-                        .map(personFromDataSet -> {
-                            if ("Euclidean".equals(similarity)) {
-                                return new KeyScore(personFromDataSet, EuclideanDistanceScore.getSimilarityDistance(recommendations, person, personFromDataSet));
-                            } else {
-                                return new KeyScore(personFromDataSet, PearsonCorrelationScore.getSimilarityDistance(recommendations, person, personFromDataSet));
-                            }
-                        }).sorted((e1, e2) -> e2.getScore().compareTo(e1.getScore())).collect(Collectors.toList());
-
-        return scores.subList(0, topN);
+        System.out.println("=========================Movies like Superman Returns=========================");
+        System.out.println("\"Superman Returns\" top 3 like: " + topMarchers(movieToPerson(), "Superman Returns", 5, "Pearson"));
+        System.out.println("\"Superman Returns\" Recommendations with Pearson algorithm: " + getUserBasedRecommendations(movieToPerson(), "Superman Returns", "Pearson"));
+        System.out.println("\"Superman Returns\" Recommendations with Euclidean algorithm: " + getUserBasedRecommendations(movieToPerson(), "Superman Returns", "Euclidean"));
+        System.out.println("=========================Movies like Superman Returns=========================");
     }
 
-    public static List<KeyScore> getRecommendations(Map<String, Map<String, Double>> recommendations, String person, String similarityAlg) {
+    public static List<KeyScore> getUserBasedRecommendations(Map<String, Map<String, Double>> recommendations, String person, String similarityAlg) {
         Map<String, Double> totals = new HashMap<>();
         Map<String, Double> simSum = new HashMap<>();
         for (String personFromDataSet : recommendations.keySet()) {
@@ -159,33 +114,45 @@ public class Recommendations {
         return rankings;
     }
 
-    public static void main(String[] args) {
-        System.out.println("=========================Recommendations for Toby=========================");
-        System.out.println("\"Toby\" top 3 recomenders: " + topMarchers(personToMovie, "Toby", 3, "Pearson"));
-        System.out.println("\"Toby\" Recommendations with Pearson algorithm: " + getRecommendations(personToMovie, "Toby", "Pearson"));
-        System.out.println("\"Toby\" Recommendations with Euclidean algorithm: " + getRecommendations(personToMovie, "Toby", "Euclidean"));
-        System.out.println("=========================Recommendations for Toby=========================");
+    public static List<KeyScore> getItemBasedRecommendations(Map<String, Map<String, Double>> recommendations, String person, String similarityAlg) {
 
-        System.out.println("=========================Movies like Superman Returns=========================");
-        System.out.println("\"Superman Returns\" top 3 like: " + topMarchers(movieToPerson, "Superman Returns", 5, "Pearson"));
-        System.out.println("\"Superman Returns\" Recommendations with Pearson algorithm: " + getRecommendations(movieToPerson, "Superman Returns", "Pearson"));
-        System.out.println("\"Superman Returns\" Recommendations with Euclidean algorithm: " + getRecommendations(movieToPerson, "Superman Returns", "Euclidean"));
-        System.out.println("=========================Movies like Superman Returns=========================");
+        List<KeyScore> rankings = new ArrayList<>();
+        return rankings;
     }
 
-    @Data
-    @AllArgsConstructor
-    static
-    class KeyScore {
-        String key;
-        Double score;
+    public static List<KeyScore> topMarchers(Map<String, Map<String, Double>> recommendations, String person, int topN, String similarity) {
+        List<KeyScore> scores =
+                recommendations.keySet().stream().filter(personFromDataSet -> !personFromDataSet.equals(person))
+                        .map(personFromDataSet -> {
+                            if ("Euclidean".equals(similarity)) {
+                                return new KeyScore(personFromDataSet, EuclideanDistanceScore.getSimilarityDistance(recommendations, person, personFromDataSet));
+                            } else {
+                                return new KeyScore(personFromDataSet, PearsonCorrelationScore.getSimilarityDistance(recommendations, person, personFromDataSet));
+                            }
+                        }).sorted((e1, e2) -> e2.getScore().compareTo(e1.getScore())).collect(Collectors.toList());
 
-        @Override
-        public String toString() {
-            return "('" +
-                    key + "'" +
-                    ", " + score +
-                    ')';
+        return scores.subList(0, topN);
+    }
+
+    private static void calculateSimilarItems(Map<String, Map<String, Double>> recommendations, Integer topN) {
+
+    }
+
+    private static Map<String, Map<String, Double>> movieToPerson() {
+        Map<String, Map<String, Double>> movieToPerson = new HashMap<>();
+        for (String person : personToMovie.keySet()) {
+            Map<String, Double> scores = personToMovie.get(person);
+            for (String movie : scores.keySet()) {
+                Map<String, Double> personMovieScore;
+                if (movieToPerson.containsKey(movie)) {
+                    personMovieScore = movieToPerson.get(movie);
+                } else {
+                    personMovieScore = new HashMap<>();
+                }
+                personMovieScore.put(person, scores.get(movie));
+                movieToPerson.put(movie, personMovieScore);
+            }
         }
+        return movieToPerson;
     }
 }
