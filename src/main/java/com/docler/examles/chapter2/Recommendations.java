@@ -115,13 +115,10 @@ public class Recommendations {
         return rankings;
     }
 
-    public static List<KeyScore> getItemBasedRecommendations(Map<String, Map<String, Double>> recommendations, String person, String similarityAlg) {
+    public static List<KeyScore> getItemBasedRecommendations(Map<String, Map<String, Double>> recommendations, Map<String, List<KeyScore>> itemsSimilarity, String person, String similarityAlg) {
         Map<String, Double> personScores = recommendations.get(person);
         Map<String, Double> totalScore = new HashMap<>();
         Map<String, Double> totalSim = new HashMap<>();
-        System.out.println("------------------calculateSimilarItems started------------------");
-        Map<String, List<KeyScore>> itemsSimilarity = calculateSimilarItems(recommendations, 10);
-        System.out.println("------------------calculateSimilarItems complete------------------");
         //Loop over items rated by this user
         for (String movie : personScores.keySet()) {
             List<KeyScore> similarItems = itemsSimilarity.get(movie);
@@ -164,7 +161,7 @@ public class Recommendations {
         return scores.subList(0, topN);
     }
 
-    private static Map<String, List<KeyScore>> calculateSimilarItems(Map<String, Map<String, Double>> recommendations, Integer topN) {
+    public static Map<String, List<KeyScore>> calculateSimilarItems(Map<String, Map<String, Double>> recommendations, Integer topN) {
         //Create a dictionary of items showing which other items they are similar to
         Map<String, List<KeyScore>> result = new HashMap<>();
         //Invert the preference matrix to be item-centric
@@ -182,7 +179,7 @@ public class Recommendations {
         return result;
     }
 
-    private static Map<String, Map<String, Double>> movieToPerson(Map<String, Map<String, Double>> recommendations) {
+    public static Map<String, Map<String, Double>> movieToPerson(Map<String, Map<String, Double>> recommendations) {
         Map<String, Map<String, Double>> movieToPerson = new HashMap<>();
         for (String person : recommendations.keySet()) {
             Map<String, Double> scores = recommendations.get(person);

@@ -27,7 +27,7 @@ public class EuclideanDistanceScore {
     private static double getDistance(Map<String, Map<String, Double>> recommendations, Set<String> sameMoveScored, String person1, String person2) {
         Double sumOfSquares =
                 sameMoveScored.stream().map(movie ->
-                pow(recommendations.get(person1).get(movie) - recommendations.get(person2).get(movie), 2)).reduce(0.0, Double::sum);
+                        pow(recommendations.get(person1).get(movie) - recommendations.get(person2).get(movie), 2)).reduce(0.0, Double::sum);
         return sqrt(sumOfSquares);
     }
 
