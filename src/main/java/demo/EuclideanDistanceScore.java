@@ -31,9 +31,9 @@ public class EuclideanDistanceScore {
 
     public static void main(String[] args) {
         System.out.println("=========================EuclideanDistanceScore=========================");
-        System.out.println("\"Lisa Rose\" and \"Gene Seymour\" Distance: " + getSimilarityDistance(demo.Recommendations.personToMovie, "Lisa Rose", "Gene Seymour"));
-        System.out.println("\"Lisa Rose\" and \"Toby\" Distance: " + getSimilarityDistance(demo.Recommendations.personToMovie, "Lisa Rose", "Toby"));
-        System.out.println("\"Mick LaSalle\" and \"Toby\" Distance: " + getSimilarityDistance(Recommendations.personToMovie, "Mick LaSalle", "Jack Matthews"));
+        System.out.println("\"Gene Seymour\" and \"Aleksei\" Distance: " + getSimilarityDistance(demo.Recommendations.personToMovie, "Aleksei", "Gene Seymour"));
+        System.out.println("\"Lisa Rose\" and \"Aleksei\" Distance: " + getSimilarityDistance(demo.Recommendations.personToMovie, "Lisa Rose", "Aleksei"));
+        System.out.println("\"Mick LaSalle\" and \"Aleksei\" Distance: " + getSimilarityDistance(Recommendations.personToMovie, "Mick LaSalle", "Aleksei"));
         System.out.println("=========================EuclideanDistanceScore=========================");
     }
 }
