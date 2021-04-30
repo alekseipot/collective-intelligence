@@ -6,31 +6,51 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.docler.examles.chapter2.Recommendations.movieToPerson;
-
 public class MovieWithDataSet {
 
     public static void main(String[] args) {
         Map<Long, String> movieIdToTitle = loadMovieIdToTitle();
-//        Map<String, Map<String, Double>> personToMovie = loadDataSet(movieIdToTitle);
-//        System.out.println("====================Get recommendations for user====================");
-//        System.out.println("User based recommendation for user 177: " + Recommendations.getUserBasedRecommendations(personToMovie, "177", "Euclidean"));
-//
-//        System.out.println("------------------calculateSimilarItems started------------------");
-//        Map<String, List<KeyScore>> itemsSimilarity = Recommendations.calculateSimilarItems(personToMovie, 10);
-//        System.out.println("------------------calculateSimilarItems complete------------------");
-//        System.out.println("Item based recommendation for user 177: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "177", "Euclidean"));
-//        System.out.println("Item based recommendation for user 183: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "183", "Euclidean"));
-//        System.out.println("Item based recommendation for user 198: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "198", "Euclidean"));
-//        System.out.println("Item based recommendation for user 552: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "552", "Euclidean"));
+        Map<String, Map<String, Double>> personToMovie = loadDataSet(movieIdToTitle);
+        System.out.println("====================Get recommendations for user====================");
+        long start = System.currentTimeMillis();
+        System.out.println("User based recommendation for user 177: " + Recommendations.getUserBasedRecommendations(personToMovie, "177", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        System.out.println("User based recommendation for user 183: " + Recommendations.getUserBasedRecommendations(personToMovie, "183", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        System.out.println("User based recommendation for user 198: " + Recommendations.getUserBasedRecommendations(personToMovie, "198", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        System.out.println("User based recommendation for user 552: " + Recommendations.getUserBasedRecommendations(personToMovie, "552", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+
+
+        System.out.println("------------------calculateSimilarItems started------------------");
+        start = System.currentTimeMillis();
+        Map<String, List<KeyScore>> itemsSimilarity = Recommendations.calculateSimilarItems(personToMovie, 10);
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        System.out.println("------------------calculateSimilarItems complete------------------");
+        start = System.currentTimeMillis();
+        System.out.println("Item based recommendation for user 177: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "177", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        start = System.currentTimeMillis();
+        System.out.println("Item based recommendation for user 183: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "183", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        start = System.currentTimeMillis();
+        System.out.println("Item based recommendation for user 198: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "198", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        start = System.currentTimeMillis();
+        System.out.println("Item based recommendation for user 552: " + Recommendations.getItemBasedRecommendations(personToMovie, itemsSimilarity, "552", "Euclidean").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
 
         System.out.println("------------------calculateSimilarTags started------------------");
         Map<String, Map<String, Double>> movieToTag = loadTagDataSet(movieIdToTitle);
+        start = System.currentTimeMillis();
         Map<String, List<KeyScore>> tagsSimilarity = Recommendations.calculateSimilarItems(movieToTag, 10);
-        System.out.println("tagsSimilarity: " + tagsSimilarity);
-        System.out.println("Item based tags recommendation for Fight Club (1999) ending: " + Recommendations.getItemBasedRecommendations(movieToTag, tagsSimilarity, "Fight Club (1999)", "Pearson"));
-
-        System.out.println("------------------calculateSimilarItems complete------------------");
+//        System.out.println("tagsSimilarity: " + tagsSimilarity);
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms to get tagsSimilarity");
+        start = System.currentTimeMillis();
+        System.out.println("Item based tags recommendation for Fight Club (1999) ending: " + Recommendations.getItemBasedRecommendations(movieToTag, tagsSimilarity, "Fight Club (1999)", "Pearson").subList(0, 5));
+        System.out.println("Spent: " + (System.currentTimeMillis() - start) + "ms");
+        System.out.println("------------------calculateSimilarTags complete------------------");
     }
 
     private static Map<Long, String> loadMovieIdToTitle() {
